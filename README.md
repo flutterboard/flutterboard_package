@@ -11,9 +11,10 @@ change without notice.
 ## What works today
 
 A `FlutterBoard` widget that renders a small node vocabulary from a JSON-like
-map: `column`, `row`, `card`, `padding`, `center`, `text`, `button`, `spacer`,
-`divider`. Interactive nodes fire named actions back to your code. Unknown
-node types degrade to an inline error chip instead of throwing.
+map: `column`, `row`, `wrap`, `card`, `padding`, `center`, `text`, `icon`,
+`chip`, `button`, `list`, `progress`, `spacer`, `divider`. Interactive nodes
+(`button`, `list` items) fire named actions back to your code. Unknown node
+types degrade to an inline error chip instead of throwing.
 
 ```dart
 import 'package:flutterboard/flutterboard.dart';
