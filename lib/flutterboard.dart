@@ -16,10 +16,10 @@ typedef BoardActionHandler = void Function(
 
 /// Renders a board document — a JSON-like tree of node maps — as widgets.
 ///
-/// Supported node `type`s in this preview: `column`, `row`, `card`, `padding`,
-/// `center`, `text`, `button`, `spacer`, `divider`. Unknown types render an
-/// inline error chip rather than throwing, so a typo never takes down the
-/// whole board.
+/// Supported node `type`s in this preview: `column`, `row`, `wrap`, `card`,
+/// `padding`, `center`, `text`, `icon`, `chip`, `button`, `list`, `progress`,
+/// `spacer`, `divider`. Unknown types render an inline error chip rather than
+/// throwing, so a typo never takes down the whole board.
 ///
 /// ```dart
 /// FlutterBoard(
@@ -56,6 +56,12 @@ class FlutterBoard extends StatelessWidget {
         );
       case 'row':
         return Row(children: _children(context, node));
+      case 'wrap':
+        return Wrap(
+          spacing: (node['spacing'] as num?)?.toDouble() ?? 8,
+          runSpacing: (node['runSpacing'] as num?)?.toDouble() ?? 8,
+          children: _children(context, node),
+        );
       case 'card':
         return Card(
           child: Padding(
@@ -82,6 +88,49 @@ class FlutterBoard extends StatelessWidget {
             'caption' => Theme.of(context).textTheme.bodySmall,
             _ => null,
           },
+        );
+      case 'icon':
+        return Icon(
+          _icon('${node['value'] ?? ''}'),
+          size: (node['size'] as num?)?.toDouble(),
+        );
+      case 'chip':
+        return Chip(
+          avatar: node['icon'] is String ? Icon(_icon(node['icon'] as String), size: 16) : null,
+          label: Text('${node['label'] ?? ''}'),
+        );
+      case 'progress':
+        final value = (node['value'] as num?)?.toDouble();
+        return node['circular'] == true
+            ? CircularProgressIndicator(value: value)
+            : LinearProgressIndicator(value: value);
+      case 'list':
+        // Static item list: each item is {title, subtitle?, icon?, action?,
+        // args?}. Tapping an item with an `action` fires it like a button.
+        final items = (node['items'] as List?) ?? const [];
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final raw in items)
+              if (raw is Map)
+                ListTile(
+                  dense: node['dense'] == true,
+                  leading: raw['icon'] is String
+                      ? Icon(_icon(raw['icon'] as String))
+                      : null,
+                  title: Text('${raw['title'] ?? ''}'),
+                  subtitle: raw['subtitle'] is String
+                      ? Text('${raw['subtitle']}')
+                      : null,
+                  onTap: raw['action'] is String
+                      ? () => onAction?.call(
+                            raw['action'] as String,
+                            (raw['args'] as Map?)?.cast<String, dynamic>() ??
+                                const {},
+                          )
+                      : null,
+                ),
+          ],
         );
       case 'button':
         return FilledButton(
@@ -116,4 +165,22 @@ class FlutterBoard extends StatelessWidget {
     final children = _children(context, node);
     return children.isEmpty ? null : children.first;
   }
+
+  /// A small, stable icon-name vocabulary. Unknown names render as a
+  /// question mark — same degrade-don't-throw stance as unknown node types.
+  static IconData _icon(String name) => switch (name) {
+        'add' => Icons.add,
+        'check' => Icons.check,
+        'close' => Icons.close,
+        'star' => Icons.star,
+        'favorite' => Icons.favorite,
+        'home' => Icons.home,
+        'settings' => Icons.settings,
+        'search' => Icons.search,
+        'edit' => Icons.edit,
+        'delete' => Icons.delete,
+        'arrow_forward' => Icons.arrow_forward,
+        'info' => Icons.info_outline,
+        _ => Icons.help_outline,
+      };
 }

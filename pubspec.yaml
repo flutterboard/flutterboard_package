@@ -2,7 +2,7 @@ name: flutterboard
 description: >-
   Build Flutter widgets from declarative JSON board documents. Early preview
   of the flutterboard engine; APIs are experimental and will change.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/flutterboard/flutterboard_package
 
 environment:
