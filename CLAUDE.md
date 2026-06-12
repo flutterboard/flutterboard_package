@@ -21,9 +21,9 @@ can run `dart pub publish` (interactive Google OAuth). Never attempt it.
   --dry-run` before pushing. CI enforces the first two on push.
 - Version bumps: update pubspec version + CHANGELOG entry together.
 - This repo is single-session — claim it in
-  `~/dev/github.com/_claude/BOARD.md` anyway, habit is the point.
+  `~/dev/github-orgs/_claude/BOARD.md` anyway, habit is the point.
 
 Relationship to the rest: engine concepts come from the monorepo
 (`~/dev/workspace1`); brand rules in
-`~/dev/github.com/_claude/knowledge/flutterboard.md` (notably: flutterboard
+`~/dev/github-orgs/_claude/knowledge/flutterboard.md` (notably: flutterboard
 is a package name, NOT a commercial product brand — Google trademark line).
